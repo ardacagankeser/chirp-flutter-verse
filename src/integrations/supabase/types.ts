@@ -9,33 +9,157 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      question: {
+      follows: {
         Row: {
           created_at: string
-          description: string | null
-          id: number
-          title: string | null
+          follower_id: string
+          following_id: string
+          id: string
         }
         Insert: {
           created_at?: string
-          description?: string | null
-          id?: number
-          title?: string | null
+          follower_id: string
+          following_id: string
+          id?: string
         }
         Update: {
           created_at?: string
-          description?: string | null
-          id?: number
-          title?: string | null
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follows_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          created_at: string
+          id: string
+          tweet_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tweet_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tweet_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_tweet_id_fkey"
+            columns: ["tweet_id"]
+            isOneToOne: false
+            referencedRelation: "tweets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          username?: string
         }
         Relationships: []
+      }
+      tweets: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tweets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_tweets: {
+        Args: { p_user_id?: string }
+        Returns: {
+          id: string
+          content: string
+          image_url: string
+          created_at: string
+          user_id: string
+          username: string
+          full_name: string
+          avatar_url: string
+          likes_count: number
+          liked_by_user: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
